@@ -4,7 +4,7 @@ import sys
 from overrides import override
 from robot.conf.settings import RebotSettings
 from robot.reporting.resultwriter import Results
-from robot.reporting.jswriter import JsResultWriter, JsonWriter, SuiteWriter
+from robot.reporting.jswriter import JsResultWriter
 from robot.utils import file_writer
 
 
