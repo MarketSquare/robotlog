@@ -1,3 +1,5 @@
+import {inflate} from "pako";
+
 interface StringStore {
     get: (id: number) => string;
 }
@@ -15,10 +17,8 @@ type MESSAGE_LEVEL = typeof MESSAGE_LEVELS[number];
 const stringStore = (strings: string[]): StringStore => {
 
     const extract = (text: string): string => {
-        /*const decoded = JXG.Util.Base64.decodeAsArray(text);
-        const extracted = (new JXG.Util.Unzip(decoded)).unzip()[0][0];
-        return JXG.Util.UTF8.decode(extracted);*/
-        return text;
+        const decoded = Uint8Array.from(atob(text), c => c.charCodeAt(0));
+        return new TextDecoder().decode(inflate(decoded));
     }
 
     return {
@@ -26,9 +26,9 @@ const stringStore = (strings: string[]): StringStore => {
             const text = strings[id];
             if (!text)
                 return '';
-            if (text[0] == '*')
+            if (text[0] === '*')
                 return text.substring(1);
-            var extracted = extract(text);
+            const extracted = extract(text);
             strings[id] = '*' + extracted;
             return extracted;
         }
