@@ -9,6 +9,9 @@ const KEYWORD_TYPES = ['KEYWORD', 'SETUP', 'TEARDOWN', 'FOR', 'ITERATION', 'IF',
                          'TRY', 'EXCEPT', 'FINALLY', 'WHILE', 'CONTINUE', 'BREAK'] as const;
 type KEYWORD_TYPE = typeof KEYWORD_TYPES[number];
 
+const MESSAGE_LEVELS = ['TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FAIL', 'SKIP'] as const;
+type MESSAGE_LEVEL = typeof MESSAGE_LEVELS[number];
+
 const stringStore = (strings: string[]): StringStore => {
 
     const extract = (text: string): string => {
@@ -36,7 +39,8 @@ export type RawSuite = readonly [number, number, number, number, number[], RawSt
 type RawStatus = [number, number, number] | [number, number, number, number];
 type RawSuiteStats = [number, number, number, number];
 
-type RawKeyword = [number, number, number, number, number, number, number, number, RawStatus, RawKeyword[]];
+type RawMessage = [number, number, number];
+type RawKeyword = [number, number, number, number, number, number, number, number, RawStatus, (RawKeyword | RawMessage)[]];
 type RawTest = [number, number, number, number[], RawStatus, RawKeyword[]];
 
 interface Times {
@@ -128,6 +132,14 @@ interface RobotFrameworkResultKeyword {
     status: STATUS;
     times: Times;
     keywords: (RobotFrameworkResultKeyword | null)[];
+    messages: RobotFrameworkResultMessage[];
+}
+
+interface RobotFrameworkResultMessage {
+    level: MESSAGE_LEVEL;
+    timestamp: Date;
+    message: string;
+    link?: string;
 }
 
 const createSuite = (parent: RobotFrameworkResultSuite | undefined, element: RawSuite, strings: StringStore, index: number, baseMillis: number): RobotFrameworkResultSuite => {
@@ -171,7 +183,6 @@ const createTest = (parent: RobotFrameworkResultSuite, element: RawTest, strings
 }
 
 const createKeyword = (parent: RobotFrameworkResultSuite | RobotFrameworkResultTest | RobotFrameworkResultKeyword, element: RawKeyword, strings: StringStore, index: number, baseMillis: number): RobotFrameworkResultKeyword | null => {
-    if (element.length < 9) return null;
     const kw: RobotFrameworkResultKeyword = {
         type: KEYWORD_TYPES[element[0]],
         id: 'k' + (index + 1),
@@ -184,10 +195,20 @@ const createKeyword = (parent: RobotFrameworkResultSuite | RobotFrameworkResultT
         doc: strings.get(element[4]),
         status: parseStatus(element[8]),
         times: times(element[8], baseMillis),
-        keywords: []
+        keywords: [],
+        messages: [],
     };
-    kw.keywords = element[9].map((rawKeyword, index) => createKeyword(kw, rawKeyword, strings, index, baseMillis));
+    kw.messages = (element[9].filter(r => r.length === 3) as RawMessage[]).map(rawMessage => createMessage(rawMessage, strings, baseMillis));
+    kw.keywords = (element[9].filter(r => r.length === 10) as RawKeyword[]).map((rawKeyword, index) => createKeyword(kw, rawKeyword, strings, index, baseMillis));
     return kw;
+}
+
+const createMessage = (element: RawMessage, strings: StringStore, baseMillis: number): RobotFrameworkResultMessage => {
+    return {
+        level: MESSAGE_LEVELS[element[1]],
+        timestamp: timestamp(element[0], baseMillis),
+        message: strings.get(element[2]),
+    }
 }
 
 
