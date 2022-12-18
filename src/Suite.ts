@@ -98,7 +98,7 @@ interface RobotFrameworkResultSuite {
     times: Times;
     statistics: SuiteStatuses;
     metadata: [string, string][];
-    keywords: RobotFrameworkResultKeyword[];
+    keywords: (RobotFrameworkResultKeyword | null)[];
     tests: RobotFrameworkResultTest[];
     suites: RobotFrameworkResultSuite[];
 }
@@ -112,7 +112,7 @@ interface RobotFrameworkResultTest {
     message: string;
     times: Times;
     tags: string[];
-    keywords: RobotFrameworkResultKeyword[];
+    keywords: (RobotFrameworkResultKeyword | null)[];
 }
 
 interface RobotFrameworkResultKeyword {
@@ -127,7 +127,7 @@ interface RobotFrameworkResultKeyword {
     doc: string;
     status: STATUS;
     times: Times;
-    keywords: RobotFrameworkResultKeyword[];
+    keywords: (RobotFrameworkResultKeyword | null)[];
 }
 
 const createSuite = (parent: RobotFrameworkResultSuite | undefined, element: RawSuite, strings: StringStore, index: number, baseMillis: number): RobotFrameworkResultSuite => {
@@ -170,7 +170,8 @@ const createTest = (parent: RobotFrameworkResultSuite, element: RawTest, strings
     return test;
 }
 
-const createKeyword = (parent: RobotFrameworkResultSuite | RobotFrameworkResultTest | RobotFrameworkResultKeyword, element: RawKeyword, strings: StringStore, index: number, baseMillis: number): RobotFrameworkResultKeyword => {
+const createKeyword = (parent: RobotFrameworkResultSuite | RobotFrameworkResultTest | RobotFrameworkResultKeyword, element: RawKeyword, strings: StringStore, index: number, baseMillis: number): RobotFrameworkResultKeyword | null => {
+    if (element.length < 9) return null;
     const kw: RobotFrameworkResultKeyword = {
         type: KEYWORD_TYPES[element[0]],
         id: 'k' + (index + 1),
@@ -185,7 +186,7 @@ const createKeyword = (parent: RobotFrameworkResultSuite | RobotFrameworkResultT
         times: times(element[8], baseMillis),
         keywords: []
     };
-    //kw.keywords = element[9].map((rawKeyword, index) => createKeyword(kw, rawKeyword, strings, index, baseMillis));
+    kw.keywords = element[9].map((rawKeyword, index) => createKeyword(kw, rawKeyword, strings, index, baseMillis));
     return kw;
 }
 
