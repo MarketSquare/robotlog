@@ -91,7 +91,7 @@ const parseMetadata = (data: number[], strings: StringStore): [string, string][]
     return metadata;
 }
 
-interface RobotFrameworkResultSuite {
+export interface RobotFrameworkResultSuite {
     id: string;
     name: string;
     source: string;
@@ -102,12 +102,12 @@ interface RobotFrameworkResultSuite {
     times: Times;
     statistics: SuiteStatuses;
     metadata: [string, string][];
-    keywords: (RobotFrameworkResultKeyword | null)[];
+    keywords: RobotFrameworkResultKeyword[];
     tests: RobotFrameworkResultTest[];
     suites: RobotFrameworkResultSuite[];
 }
 
-interface RobotFrameworkResultTest {
+export interface RobotFrameworkResultTest {
     id: string;
     name: string;
     doc: string;
@@ -116,10 +116,10 @@ interface RobotFrameworkResultTest {
     message: string;
     times: Times;
     tags: string[];
-    keywords: (RobotFrameworkResultKeyword | null)[];
+    keywords: RobotFrameworkResultKeyword[];
 }
 
-interface RobotFrameworkResultKeyword {
+export interface RobotFrameworkResultKeyword {
     type: KEYWORD_TYPE;
     id: string;
     name: string;
@@ -131,11 +131,11 @@ interface RobotFrameworkResultKeyword {
     doc: string;
     status: STATUS;
     times: Times;
-    keywords: (RobotFrameworkResultKeyword | null)[];
+    keywords: RobotFrameworkResultKeyword[];
     messages: RobotFrameworkResultMessage[];
 }
 
-interface RobotFrameworkResultMessage {
+export interface RobotFrameworkResultMessage {
     level: MESSAGE_LEVEL;
     timestamp: Date;
     message: string;
@@ -182,7 +182,7 @@ const createTest = (parent: RobotFrameworkResultSuite, element: RawTest, strings
     return test;
 }
 
-const createKeyword = (parent: RobotFrameworkResultSuite | RobotFrameworkResultTest | RobotFrameworkResultKeyword, element: RawKeyword, strings: StringStore, index: number, baseMillis: number): RobotFrameworkResultKeyword | null => {
+const createKeyword = (parent: RobotFrameworkResultSuite | RobotFrameworkResultTest | RobotFrameworkResultKeyword, element: RawKeyword, strings: StringStore, index: number, baseMillis: number): RobotFrameworkResultKeyword => {
     const kw: RobotFrameworkResultKeyword = {
         type: KEYWORD_TYPES[element[0]],
         id: 'k' + (index + 1),
