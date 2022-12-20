@@ -1,0 +1,34 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid black;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+    margin: 4px 2px 4px 0;
+    padding: 4px 0;
+}
+
+.vertical {
+    display: flex;
+    margin: 4px;
+    justify-content: flex-start;
+}
+
+.timestamp {
+    white-space: nowrap;
+}
+
+.status {
+    margin-left: 4px;
+    margin-right: 4px;
+    background: lightgray;
+    height: fit-content;
+}
+
+.logmessage {
+    text-align: left;
+    margin-top: 0;
+    margin-bottom: 0;
+    white-space: pre-wrap;
+    overflow-y: scroll;
+}
