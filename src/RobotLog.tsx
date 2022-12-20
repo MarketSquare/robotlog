@@ -29,7 +29,7 @@ const KeywordLog:FC<{keyword:RobotFrameworkResultKeyword}> = ({keyword}):JSX.Ele
 
 const TestLog:FC<{test:RobotFrameworkResultTest}> = ({test}):JSX.Element => {
     return <div className={styles.container}>
-        <div className={styles.vertical}>
+        <div className={`${styles.vertical} ${styles.testheader}`}>
             <div className={styles.timestamp}>{test.times.startTime.toISOString()}</div>
             <div className={styles.status}>{test.status}</div>
             <span className={styles.logmessage}>TEST: {test.name}</span>
@@ -40,7 +40,7 @@ const TestLog:FC<{test:RobotFrameworkResultTest}> = ({test}):JSX.Element => {
 
 export const RobotLog:FC<{suite:RobotFrameworkResultSuite}> = ({suite}):JSX.Element => {
     return <div className={styles.container}>
-        <div className={styles.vertical}>
+        <div className={`${styles.vertical} ${styles.suiteheader}`}>
             <div className={styles.timestamp}>{suite.times.startTime.toISOString()}</div>
             <div className={styles.status}>{suite.status}</div>
             <span className={styles.logmessage}>SUITE: {suite.name}</span>

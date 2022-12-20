@@ -14,6 +14,19 @@
     justify-content: flex-start;
 }
 
+.suiteheader {
+    position: sticky;
+    top: 4px;
+    background: white;
+    z-index: 1000;
+}
+
+.testheader {
+    position: sticky;
+    top: 20px;
+    background: white;
+}
+
 .timestamp {
     white-space: nowrap;
 }
