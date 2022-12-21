@@ -11,7 +11,7 @@ const MessageLog:FC<{message:RobotFrameworkResultMessage}> = ({message}):JSX.Ele
     return <div className={styles.vertical}>
         <div className={styles.timestamp}>{message.timestamp.toISOString()}</div>
         <div className={styles.status}>{message.level}</div>
-        <pre className={styles.logmessage}>{message.message}</pre>
+        <pre className={styles.logmessage} dangerouslySetInnerHTML={{__html:message.message}}/>
     </div>
 }
 
