@@ -14,23 +14,8 @@
     justify-content: flex-start;
 }
 
-.suiteheader {
+.sticker {
     position: sticky;
-    top: 4px;
-    background: white;
-    z-index: 1000;
-}
-
-.testheader {
-    position: sticky;
-    top: 20px;
-    background: white;
-    z-index: 500;
-}
-
-.keywordheader {
-    position: sticky;
-    top: 38px;
     background: white;
 }
 
