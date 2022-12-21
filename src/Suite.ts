@@ -145,7 +145,7 @@ export interface RobotFrameworkResultMessage {
 const createSuite = (parent: RobotFrameworkResultSuite | undefined, element: RawSuite, strings: StringStore, index: number, baseMillis: number): RobotFrameworkResultSuite => {
     const status = element[5];
     const suite: RobotFrameworkResultSuite = {
-        id: 's' + ((index || 0) + 1),
+        id: ( parent ? parent.id + '-' : '' ) + 's' + ((index || 0) + 1),
         name: strings.get(element[0]),
         source: strings.get(element[1]),
         relativeSource: strings.get(element[2]),
@@ -168,7 +168,7 @@ const createSuite = (parent: RobotFrameworkResultSuite | undefined, element: Raw
 const createTest = (parent: RobotFrameworkResultSuite, element: RawTest, strings: StringStore, index: number, baseMillis: number): RobotFrameworkResultTest => {
     const status = element[4];
     const test: RobotFrameworkResultTest = {
-        id: 't' + (index + 1),
+        id: parent.id + '-t' + (index + 1),
         name: strings.get(element[0]),
         doc: strings.get(element[2]),
         timeout: strings.get(element[1]),
@@ -185,7 +185,7 @@ const createTest = (parent: RobotFrameworkResultSuite, element: RawTest, strings
 const createKeyword = (parent: RobotFrameworkResultSuite | RobotFrameworkResultTest | RobotFrameworkResultKeyword, element: RawKeyword, strings: StringStore, index: number, baseMillis: number): RobotFrameworkResultKeyword => {
     const kw: RobotFrameworkResultKeyword = {
         type: KEYWORD_TYPES[element[0]],
-        id: 'k' + (index + 1),
+        id: parent.id + '-k' + (index + 1),
         name: strings.get(element[1]),
         libname: strings.get(element[2]),
         timeout: strings.get(element[3]),
