@@ -17,7 +17,7 @@ const MessageLog:FC<{message:RobotFrameworkResultMessage}> = ({message}):JSX.Ele
 
 const KeywordLog:FC<{keyword:RobotFrameworkResultKeyword}> = ({keyword}):JSX.Element => {
     return <div className={styles.container}>
-        <div className={styles.vertical}>
+        <div className={`${styles.vertical} ${styles.keywordheader}`}>
             <div className={styles.timestamp}>{keyword.times.startTime.toISOString()}</div>
             <div className={styles.status}>{keyword.status}</div>
             <span className={styles.logmessage}>{keyword.type}: {keyword.name} : {keyword.args}</span>

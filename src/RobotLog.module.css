@@ -25,6 +25,13 @@
     position: sticky;
     top: 20px;
     background: white;
+    z-index: 500;
+}
+
+.keywordheader {
+    position: sticky;
+    top: 38px;
+    background: white;
 }
 
 .timestamp {
