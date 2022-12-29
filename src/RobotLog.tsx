@@ -31,6 +31,7 @@ const KeywordLog:FC<LogProps<RobotFrameworkResultKeyword>> = ({element, level, o
             >
                 {element.name} : {element.args}</span>
             <div className={styles.status}>{element.status}</div>
+            <div>{element.id}</div>
         </Header>
         {element.keywords.length > 0 && (<div>{element.keywords.map(k => <KeywordLog key={k.id} element={k} level={level+1} observer={observer} setSelectedElementId={setSelectedElementId}/>)}</div>)}
         <div>{element.messages.map((m, i) => <MessageLog key={i} message={m}/>)}</div>
@@ -45,6 +46,7 @@ const TestLog:FC<LogProps<RobotFrameworkResultTest>> = ({element, level, observe
             <span className={styles.logmessage}
             >: {element.name}</span>
             <div className={styles.status}>{element.status}</div>
+            <div>{element.id}</div>
         </Header>
         {element.keywords.map(k => <KeywordLog key={k.id} element={k} level={level+1} observer={observer} setSelectedElementId={setSelectedElementId}/>)}
     </div>
@@ -74,6 +76,7 @@ const SuiteLog:FC<LogProps<RobotFrameworkResultSuite>> = ({element, level, obser
             <div className={styles.status}>SUITE</div>
             <span className={styles.logmessage}>{element.name}</span>
             <div className={styles.status}>{element.status}</div>
+            <div>{element.id}</div>
         </Header>
         {element.keywords.filter(k => k.type === 'SETUP').map(k => <KeywordLog key={k.id} element={k} level={level+1} observer={observer} setSelectedElementId={setSelectedElementId}/>)}
         {element.tests.map(t => <TestLog key={t.id} element={t} level={level+1} observer={observer} setSelectedElementId={setSelectedElementId}/>)}
@@ -82,7 +85,11 @@ const SuiteLog:FC<LogProps<RobotFrameworkResultSuite>> = ({element, level, obser
     </div>
 }
 
-export const RobotLog:FC<{suite:RobotFrameworkResultSuite}> = ({suite}):JSX.Element => {
+export const RobotLog:FC<{
+    suite:RobotFrameworkResultSuite;
+    onSelectedElementId?: (id: string) => void;
+    elementId?: string
+}> = ({suite, onSelectedElementId, elementId }):JSX.Element => {
 
     const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
     const [intersectionObserver, setIntersectionObserver] = useState<IntersectionObserver | undefined>(undefined);
@@ -101,6 +108,19 @@ export const RobotLog:FC<{suite:RobotFrameworkResultSuite}> = ({suite}):JSX.Elem
 
         setIntersectionObserver(new IntersectionObserver(handleIntersect, options));
     }, [])
+
+    useEffect(() => {
+        if (!elementId) return;
+        const elems = document.querySelectorAll(`[data-id='${elementId}']`);
+        if (elems.length < 2) return;
+        const e = elems[1];
+        e.scrollIntoView();
+    }, [elementId])
+
+    useEffect(() => {
+        if (!selectedElementId || !onSelectedElementId) return;
+        onSelectedElementId(selectedElementId)
+    }, [selectedElementId])
 
     return <div className={styles.robotlog} data-root="root">
         <div className={styles.header}>{selectedElementId}</div>

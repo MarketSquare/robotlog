@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './App.css';
 import {RobotLog} from "./RobotLog";
 import {RawSuite, suite} from "./Suite";
@@ -17,11 +17,18 @@ const mysuite = suite(data.suite as unknown as RawSuite, data.strings, data.base
 console.log(JSON.stringify(mysuite, null, 2));
 
 function App() {
-  return (
-    <div className="App">
-      <RobotLog suite={mysuite}/>
-    </div>
-  );
+    const [selectedElementId, setSelectedElementId] = useState<string | undefined>(undefined);
+    
+      return (
+        <div className="App">
+            <div className="log-container">
+                <RobotLog suite={mysuite} onSelectedElementId={setSelectedElementId}/>
+            </div>
+            <div className="log-container">
+                <RobotLog suite={mysuite} elementId={selectedElementId}/>
+            </div>
+        </div>
+      );
 }
 
 export default App;

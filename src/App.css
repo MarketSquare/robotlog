@@ -1,5 +1,10 @@
 .App {
   text-align: center;
+  display: flex;
+}
+
+.log-container {
+  width: 50vw;
 }
 
 .App-logo {
