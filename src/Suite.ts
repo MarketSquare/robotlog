@@ -105,6 +105,7 @@ export interface RobotFrameworkResultSuite {
     keywords: RobotFrameworkResultKeyword[];
     tests: RobotFrameworkResultTest[];
     suites: RobotFrameworkResultSuite[];
+    find: (selectedElementId: string) => RobotFrameworkResultSuite | RobotFrameworkResultTest | RobotFrameworkResultKeyword;
 }
 
 export interface RobotFrameworkResultTest {
@@ -117,6 +118,7 @@ export interface RobotFrameworkResultTest {
     times: Times;
     tags: string[];
     keywords: RobotFrameworkResultKeyword[];
+    find: (selectedElementId: string) => RobotFrameworkResultSuite | RobotFrameworkResultTest | RobotFrameworkResultKeyword;
 }
 
 export interface RobotFrameworkResultKeyword {
@@ -133,6 +135,7 @@ export interface RobotFrameworkResultKeyword {
     times: Times;
     keywords: RobotFrameworkResultKeyword[];
     messages: RobotFrameworkResultMessage[];
+    find: (selectedElementId: string) => RobotFrameworkResultSuite | RobotFrameworkResultTest | RobotFrameworkResultKeyword;
 }
 
 export interface RobotFrameworkResultMessage {
@@ -142,8 +145,9 @@ export interface RobotFrameworkResultMessage {
     link?: string;
 }
 
-const createSuite = (parent: RobotFrameworkResultSuite | undefined, element: RawSuite, strings: StringStore, index: number, baseMillis: number): RobotFrameworkResultSuite => {
+const createSuite = (parent: RobotFrameworkResultSuite | undefined, element: RawSuite, strings: StringStore, index: number, baseMillis: number, elementsById?: {[id: string]: RobotFrameworkResultSuite | RobotFrameworkResultTest | RobotFrameworkResultKeyword}): RobotFrameworkResultSuite => {
     const status = element[5];
+    const elementsByIdDict = elementsById ?? {};
     const suite: RobotFrameworkResultSuite = {
         id: ( parent ? parent.id + '-' : '' ) + 's' + ((index || 0) + 1),
         name: strings.get(element[0]),
@@ -157,15 +161,19 @@ const createSuite = (parent: RobotFrameworkResultSuite | undefined, element: Raw
         metadata: parseMetadata(element[4], strings),
         keywords: [],
         tests: [],
-        suites: []
+        suites: [],
+        find: (id: string) => {
+            return elementsByIdDict[id];
+        }
     }
-    suite.keywords = element[8].map((rawKeyword, index) => createKeyword(suite, rawKeyword, strings, index, baseMillis));
-    suite.tests =  element[7].map((rawTest, index) => createTest(suite, rawTest, strings, index, baseMillis));
-    suite.suites = element[6].map((rawSuite, index) => createSuite(suite, rawSuite, strings, index, baseMillis));
+    elementsByIdDict[suite.id] = suite;
+    suite.keywords = element[8].map((rawKeyword, index) => createKeyword(suite, rawKeyword, strings, index, baseMillis, elementsByIdDict));
+    suite.tests =  element[7].map((rawTest, index) => createTest(suite, rawTest, strings, index, baseMillis, elementsByIdDict));
+    suite.suites = element[6].map((rawSuite, index) => createSuite(suite, rawSuite, strings, index, baseMillis, elementsByIdDict));
     return suite;
 }
 
-const createTest = (parent: RobotFrameworkResultSuite, element: RawTest, strings: StringStore, index: number, baseMillis: number): RobotFrameworkResultTest => {
+const createTest = (parent: RobotFrameworkResultSuite, element: RawTest, strings: StringStore, index: number, baseMillis: number, elementsById: {[id: string]: RobotFrameworkResultSuite | RobotFrameworkResultTest | RobotFrameworkResultKeyword}): RobotFrameworkResultTest => {
     const status = element[4];
     const test: RobotFrameworkResultTest = {
         id: parent.id + '-t' + (index + 1),
@@ -177,12 +185,16 @@ const createTest = (parent: RobotFrameworkResultSuite, element: RawTest, strings
         times: times(status, baseMillis),
         tags: element[3].map(strings.get),
         keywords: [],
+        find: (id: string) => {
+            return elementsById[id];
+        }
     };
-    test.keywords = element[5].map((rawKeyword, index) => createKeyword(test, rawKeyword, strings, index, baseMillis));
+    elementsById[test.id] = test;
+    test.keywords = element[5].map((rawKeyword, index) => createKeyword(test, rawKeyword, strings, index, baseMillis, elementsById));
     return test;
 }
 
-const createKeyword = (parent: RobotFrameworkResultSuite | RobotFrameworkResultTest | RobotFrameworkResultKeyword, element: RawKeyword, strings: StringStore, index: number, baseMillis: number): RobotFrameworkResultKeyword => {
+const createKeyword = (parent: RobotFrameworkResultSuite | RobotFrameworkResultTest | RobotFrameworkResultKeyword, element: RawKeyword, strings: StringStore, index: number, baseMillis: number, elementsById: {[id: string]: RobotFrameworkResultSuite | RobotFrameworkResultTest | RobotFrameworkResultKeyword}): RobotFrameworkResultKeyword => {
     const kw: RobotFrameworkResultKeyword = {
         type: KEYWORD_TYPES[element[0]],
         id: parent.id + '-k' + (index + 1),
@@ -197,9 +209,13 @@ const createKeyword = (parent: RobotFrameworkResultSuite | RobotFrameworkResultT
         times: times(element[8], baseMillis),
         keywords: [],
         messages: [],
+        find: (id: string) => {
+            return elementsById[id];
+        }
     };
+    elementsById[kw.id] = kw;
     kw.messages = (element[9].filter(r => r.length === 3) as RawMessage[]).map(rawMessage => createMessage(rawMessage, strings, baseMillis));
-    kw.keywords = (element[9].filter(r => r.length === 10) as RawKeyword[]).map((rawKeyword, index) => createKeyword(kw, rawKeyword, strings, index, baseMillis));
+    kw.keywords = (element[9].filter(r => r.length === 10) as RawKeyword[]).map((rawKeyword, index) => createKeyword(kw, rawKeyword, strings, index, baseMillis, elementsById));
     return kw;
 }
 

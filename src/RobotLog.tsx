@@ -87,9 +87,9 @@ const SuiteLog:FC<LogProps<RobotFrameworkResultSuite>> = ({element, level, obser
 
 export const RobotLog:FC<{
     suite:RobotFrameworkResultSuite;
-    onSelectedElementId?: (id: string) => void;
+    onSelectedElement?: (element: RobotFrameworkResultSuite | RobotFrameworkResultTest | RobotFrameworkResultKeyword) => void;
     elementId?: string
-}> = ({suite, onSelectedElementId, elementId }):JSX.Element => {
+}> = ({suite, onSelectedElement, elementId }):JSX.Element => {
 
     const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
     const [intersectionObserver, setIntersectionObserver] = useState<IntersectionObserver | undefined>(undefined);
@@ -118,8 +118,9 @@ export const RobotLog:FC<{
     }, [elementId])
 
     useEffect(() => {
-        if (!selectedElementId || !onSelectedElementId) return;
-        onSelectedElementId(selectedElementId)
+        if (!selectedElementId || !onSelectedElement) return;
+        console.log(selectedElementId)
+        onSelectedElement(suite.find(selectedElementId))
     }, [selectedElementId])
 
     return <div className={styles.robotlog} data-root="root">

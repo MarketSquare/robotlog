@@ -17,16 +17,16 @@ const mysuite = suite(data.suite as unknown as RawSuite, data.strings, data.base
 console.log(JSON.stringify(mysuite, null, 2));
 
 function App() {
-    const [selectedElementId, setSelectedElementId] = useState<string | undefined>(undefined);
+    const [selectedElement, setSelectedElement] = useState<RobotFrameworkResultSuite | RobotFrameworkResultTest | RobotFrameworkResultKeyword | undefined>(undefined);
     
       return (
         <div className="App">
-            <div className="header-container">{selectedElementId}</div>
+            <div className="header-container">{selectedElement?.id}</div>
             <div className="log-container-1">
-                <RobotLog suite={mysuite} onSelectedElementId={setSelectedElementId}/>
+                <RobotLog suite={mysuite} onSelectedElement={setSelectedElement}/>
             </div>
             <div className="log-container-2">
-                <RobotLog suite={mysuite} elementId={selectedElementId}/>
+                <RobotLog suite={mysuite} elementId={selectedElement?.id}/>
             </div>
         </div>
       );
