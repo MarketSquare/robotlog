@@ -123,7 +123,6 @@ export const RobotLog:FC<{
     }, [selectedElementId])
 
     return <div className={styles.robotlog} data-root="root">
-        <div className={styles.header}>{selectedElementId}</div>
         <SuiteLog element={suite}
                   level={0}
                   observer={intersectionObserver}

@@ -1,10 +1,24 @@
 .App {
   text-align: center;
   display: flex;
+  padding-top: 20px;
 }
 
-.log-container {
+.log-container-1 {
   width: 50vw;
+}
+
+.log-container-2 {
+  width: 50vw;
+}
+
+.header-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-bottom: 1px solid;
 }
 
 .App-logo {
@@ -20,7 +34,8 @@
 
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  width: 100vw;
+  height: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -21,10 +21,11 @@ function App() {
     
       return (
         <div className="App">
-            <div className="log-container">
+            <div className="header-container">{selectedElementId}</div>
+            <div className="log-container-1">
                 <RobotLog suite={mysuite} onSelectedElementId={setSelectedElementId}/>
             </div>
-            <div className="log-container">
+            <div className="log-container-2">
                 <RobotLog suite={mysuite} elementId={selectedElementId}/>
             </div>
         </div>
